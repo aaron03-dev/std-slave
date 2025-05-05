@@ -109,34 +109,53 @@ router.post("/start-ftp", async (req, res) => {
 });
 
 
-
+let pythonProcess = null;
 router.get('/liveview', (req, res) => {
     const isOn = req.query.on !== undefined;
 
     if (isOn) {
+        if (pythonProcess) {
+            return res.send('⚠️ Server Python đã chạy rồi.');
+        }
+
         const filePath = path.join(__dirname, '../..', 'sv.txt.txt');
-        const folderPath = path.dirname(filePath); // Lấy thư mục chứa file
-        console.log("đang chạy sv py")
+        const folderPath = path.dirname(filePath);
 
-        // Lệnh chạy file Python
-        const command = `py "${filePath}"`;
-
-        // Thực thi lệnh
-        exec(command, { cwd: folderPath }, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`❌ Lỗi khi chạy server Python: ${error.message}`);
-                return;
-            }
-            if (stderr) {
-                console.error(`❌ Lỗi Python: ${stderr}`);
-                return;
-            }
-            console.log(`✅ Server Python đã chạy: ${stdout}`);
+        pythonProcess = spawn('py', [filePath], {
+            cwd: folderPath,
+            detached: true,
+            shell: true,
+            stdio: 'ignore' // hoặc ['ignore', 'ignore', 'ignore'] nếu không cần log
         });
+
+        pythonProcess.unref(); // cho phép tiến trình sống độc lập
+        console.log('🚀 Đã khởi động server Python.', pythonProcess.pid);
+        res.send('🚀 Server Python đã khởi động.');
     } else {
-        //stopPythonServer()
-        res.send('🛑 Liveview stopped');
+        res.send('⚠️ Không bật liveview.');
     }
 });
+
+
+router.post('/terminate', (req, res) => {
+    if (pythonProcess) {
+        const pid = pythonProcess.pid;
+        console.log(pid)
+
+        exec(`taskkill /PID ${pid} /T /F`, (err, stdout, stderr) => {
+            if (err) {
+                console.error('❌ Kill failed:', err);
+                return res.status(500).send('❌ Không thể dừng server.');
+            } else {
+                console.log('✅ Process killed');
+                pythonProcess = null;
+                res.send('🛑 Python server stopped.');
+            }
+        });
+    } else {
+        res.send('⚠️ Không có server Python nào đang chạy.');
+    }
+});
+
 
 module.exports = router;

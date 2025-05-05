@@ -66,9 +66,6 @@ function getHomePage(req, res) {
   res.send(html)
 }
 
-  
-
-
 
 
 async function startConfigCam() {
