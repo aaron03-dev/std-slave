@@ -12,7 +12,7 @@ let lastFolderName = ''; // Lưu tên thư mục output khi chạy file .exe
 
 // 👉 Route để chạy file exe
 router.post('/start', (req, res) => {
-    const { folderName } = req.body;
+    const { folderName } = req.body; 
 
     if (!folderName) {
         return res.status(400).json({ message: 'folderName is required' });

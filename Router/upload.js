@@ -39,7 +39,8 @@ router.post('/upload-configfile', async (req, res) => {
             return res.status(400).json({ message: 'Không có nội dung config' });
         }
 
-        const filePath = path.join('D:\\config-camxyz', 'conf.txt');
+        const filePath = path.join('D:', 'config-camxyz', 'conf.txt');
+        //path.join(__dirname, "batches");
 
         // Đảm bảo thư mục tồn tại
         fs.mkdirSync(path.dirname(filePath), { recursive: true });

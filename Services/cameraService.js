@@ -71,6 +71,7 @@ function getHomePage(req, res) {
 async function startConfigCam() {
     return new Promise((resolve, reject) => {
         const exePath = path.join('D:', 'config-camxyz', 'ConfigCam.exe');
+        //path.join(__dirname, "batches");
 
         // Kiểm tra file có tồn tại không
         if (!fs.existsSync(exePath)) {
