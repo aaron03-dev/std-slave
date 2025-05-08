@@ -118,7 +118,7 @@ router.get('/liveview', (req, res) => {
             return res.send('⚠️ Server Python đã chạy rồi.');
         }
 
-        const filePath = path.join(__dirname, '../..', 'sv.txt.txt');
+        const filePath = path.join(__dirname, '../..', 'sv.txt');
         const folderPath = path.dirname(filePath);
 
         pythonProcess = spawn('py', [filePath], {
